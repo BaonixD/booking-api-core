@@ -1,0 +1,18 @@
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from app.db.session import Base
+from sqlalchemy import JSON
+
+
+class Hotels(Base):
+    __tablename__ = "hotels"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(nullable=False)
+    location: Mapped[str] = mapped_column(nullable=False)
+
+    services: Mapped[list[str]] = mapped_column(JSON, nullable=True) # Postgres поймет это как JSON
+    rooms_quantity: Mapped[int] = mapped_column(nullable=False)
+    image_id: Mapped[int] = mapped_column(nullable=True)
+
+    # Связь: у одного отеля много номеров
+    rooms: Mapped[list["Rooms"]] = relationship(back_populates="hotel")
