@@ -4,8 +4,8 @@ from typing import Optional
 
 class UserBase(BaseModel):
     """Базовые поля пользователя"""
-    first_name: str = Field(min_length=1, max_length=100)
-    last_name: Optional[str] = Field(None, max_length=100)
+    firstName: str = Field(min_length=1, max_length=100)
+    lastName: Optional[str] = Field(None, max_length=100)
     email: str
 
 class UserCreate(UserBase):
