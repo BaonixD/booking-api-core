@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.session import Base
-from sqlalchemy import JSON
+from sqlalchemy import JSON, UniqueConstraint
 
 
 class Hotels(Base):
@@ -17,3 +17,8 @@ class Hotels(Base):
 
     # Связь: у одного отеля много номеров
     rooms: Mapped[list["Rooms"]] = relationship(back_populates="hotel")
+
+    # Это ограничение не даст вставить в базу отель с тем же именем И адресом
+    __table_args__ = (
+        UniqueConstraint("name", "location", name="uq_hotels_name_location"),
+    )

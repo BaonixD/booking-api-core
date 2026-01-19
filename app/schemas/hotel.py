@@ -58,6 +58,7 @@ class HotelListResponse(BaseModel):
     location: str
     stars: Optional[int]
     rooms_quantity: int
+    image_id: Optional[int]
 
     model_config = ConfigDict(from_attributes=True)
 
