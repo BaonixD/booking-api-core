@@ -27,7 +27,7 @@ async def get_current_user(
     # ищем юзера в базе
     query = select(User).where(User.id == int(user_id) )
     result = await session.execute(query)
-    user = result.scalars.first()
+    user = result.scalars().first()
 
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
