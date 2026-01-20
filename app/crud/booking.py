@@ -42,3 +42,32 @@ async def create_booking (session: AsyncSession, booking_data: BookingCreate, us
     return new_bookings
 
 
+
+async def my_bookings ( session: AsyncSession, user_id: int ):
+
+    query = select(Bookings).where( Bookings.user_id == user_id )
+    res = await session.execute(query)
+    return res.scalars().all()
+
+
+
+
+async def delete_booking ( session: AsyncSession, booking_id: int, user_id: int ):
+
+    query = select(Bookings).where( and_( Bookings.user_id == user_id, Bookings.id == booking_id ) )
+    res = await session.execute(query)
+    booking = res.scalars().first()
+
+    if not booking:
+        raise HTTPException(
+            status_code=404,
+            detail="The booking was not found or you do not have permission to delete it."
+        )
+
+    await session.delete(booking)
+    await session.commit()
+    return { "message" : "Booking successfully cancelled" }
+
+
+
+
