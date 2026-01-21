@@ -13,7 +13,7 @@ from app.models.User import User
 from app.models.Hotel import Hotels
 from app.models.Room import Rooms
 from app.models.Booking import Bookings
-
+from app.models.RefreshToken import RefreshTokens
 
 
 # this is the Alembic Config object, which provides
