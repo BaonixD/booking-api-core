@@ -1,15 +1,26 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_db
-from app.crud.hotels import get_all_hotels, get_hotel_by_id, create_hotel, delete_hotel, update_hotel, get_hotel_full_info
-from app.schemas.hotel import HotelResponse, HotelListResponse, HotelCreate, HotelUpdate, HotelWithRoomsResponse
-
+from app.crud.hotels import get_all_hotels, get_hotel_by_id, create_hotel, delete_hotel, update_hotel, get_hotel_full_info, search_hotels_by_availability
+from app.schemas.hotel import HotelResponse, HotelListResponse, HotelCreate, HotelUpdate, HotelWithRoomsResponse, HotelSearchResponse
+from datetime import date
 
 router = APIRouter( prefix="/hotels", tags=["Hotels"] )
 
 @router.get( "/", response_model= list[HotelListResponse] )
 async def get_hotels( db: AsyncSession = Depends(get_db) ):
     return await get_all_hotels(db)
+
+
+@router.get( "/search", response_model=list[HotelSearchResponse])
+async def search_hotels( location: str, date_from: date, date_to: date, db: AsyncSession = Depends( get_db ) ):
+
+    if date_from >= date_to:
+        raise HTTPException( status_code=400, detail= "The arrival date must be before the departure date" )
+
+    return await search_hotels_by_availability( db, location, date_from, date_to )
+
+
 
 @router.get ( "/{hotel_id}", response_model = HotelResponse )
 async def read_hotel_by_id ( hotel_id: int, db: AsyncSession = Depends( get_db ) ):
@@ -51,3 +62,4 @@ async def read_full_hotel_info(
 ):
     #Возвращает всю информацию об отеле, включая список всех его комнат
     return await get_hotel_full_info(db, hotel_id)
+

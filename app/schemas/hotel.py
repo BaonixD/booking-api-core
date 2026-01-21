@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional
-
+from app.schemas.room import RoomResponse
 
 # базовая схема
 class HotelBase(BaseModel):
@@ -75,7 +75,7 @@ class RoomShortResponse(BaseModel):
 
 class HotelWithRoomsResponse(HotelResponse):
     """Схема отеля с его комнатами"""
-    rooms: list[RoomShortResponse] = []
+    rooms: list[RoomResponse] = []
 
     model_config = ConfigDict(
         from_attributes=True,
@@ -117,3 +117,13 @@ class HotelFilter(BaseModel):
             }
         }
     )
+
+
+class HotelSearchResponse(BaseModel):
+    id: int
+    name: str
+    location: str
+    stars: int
+    rooms_left: int
+
+    model_config = ConfigDict(from_attributes=True)
