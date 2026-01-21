@@ -1,9 +1,12 @@
-from sqlalchemy import select, and_
+from sqlalchemy import select, and_, func
 from fastapi import HTTPException
 from app.models.Hotel import Hotels
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.schemas.hotel import HotelCreate, HotelUpdate
 from sqlalchemy.orm import selectinload
+from app.models.Room import Rooms
+from app.models.Booking import Bookings
+from datetime import date
 
 async def get_all_hotels( session: AsyncSession ):
 
@@ -83,3 +86,34 @@ async def get_hotel_full_info(session: AsyncSession, hotel_id: int):
         raise HTTPException(status_code=404, detail="Отель не найден")
 
     return hotel
+
+async def search_hotels_by_availability( session: AsyncSession, location: str, date_from: date, date_to: date ):
+
+    booked_rooms = select(
+        Bookings.room_id,
+        func.count( Bookings.id ).label( "booked_count" )
+    ).where(
+        and_(
+            Bookings.date_from < date_to,
+            Bookings.date_to > date_from
+        )
+    ).group_by( Bookings.room_id ).cte("booked_rooms")
+
+    # объединяем отели и комнаты, вычитая брони
+    query = (
+        select(
+            Hotels.id,
+            Hotels.name,
+            Hotels.location,
+            Hotels.stars,
+            (func.sum(Rooms.quantity) - func.sum(func.coalesce(booked_rooms.c.booked_count, 0))).label("rooms_left")
+        )
+        .join(Rooms, Rooms.hotel_id == Hotels.id)
+        .outerjoin(booked_rooms, booked_rooms.c.room_id == Rooms.id)
+        .where(Hotels.location.icontains(location))
+        .group_by(Hotels.id)
+        .having(func.sum(Rooms.quantity) - func.sum(func.coalesce(booked_rooms.c.booked_count, 0)) > 0)
+    )
+
+    result = await session.execute(query)
+    return result.mappings().all()
