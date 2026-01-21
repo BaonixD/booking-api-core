@@ -20,3 +20,6 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(default=datetime.now)
 
     bookings: Mapped[list["Bookings"]] = relationship(back_populates="user")
+
+    # cascade="all, delete-orphan" очистит токены, если удалишь юзера
+    refresh_tokens: Mapped[list["RefreshTokens"]] = relationship(back_populates="user", cascade="all, delete-orphan")
