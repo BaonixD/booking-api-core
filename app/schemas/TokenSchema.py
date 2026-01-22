@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 class TokenResponse(BaseModel):
     access_token: str
@@ -13,3 +13,5 @@ class TokenRefreshRequest(BaseModel):
 class TokenRefreshResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
+
+    model_config = ConfigDict(from_attributes=True)
