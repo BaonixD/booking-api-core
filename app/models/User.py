@@ -23,3 +23,5 @@ class User(Base):
 
     # cascade="all, delete-orphan" очистит токены, если удалишь юзера
     refresh_tokens: Mapped[list["RefreshTokens"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+
+    reviews: Mapped[list["Reviews"]] = relationship(back_populates="user")

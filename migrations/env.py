@@ -14,7 +14,7 @@ from app.models.Hotel import Hotels
 from app.models.Room import Rooms
 from app.models.Booking import Bookings
 from app.models.RefreshToken import RefreshTokens
-
+from app.models.Review import Reviews
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
