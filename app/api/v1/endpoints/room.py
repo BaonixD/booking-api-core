@@ -10,6 +10,9 @@ from app.crud.room import (
     update_room
 )
 from app.schemas.room import RoomResponse, RoomCreate, RoomUpdate
+from app.crud.user import get_current_user, get_current_admin
+from app.models.User import User
+
 
 router = APIRouter(prefix="/rooms", tags=["Rooms"])
 
@@ -24,15 +27,15 @@ async def read_room_by_id ( room_id: int, db: AsyncSession = Depends(get_db) ):
 
 
 @router.post( "/create", response_model=RoomResponse )
-async def add_room ( room_in: RoomCreate, db: AsyncSession = Depends(get_db) ):
+async def add_room ( room_in: RoomCreate, db: AsyncSession = Depends(get_db), admin: User = Depends(get_current_admin) ):
     return await create_room( db, room_in )
 
 @router.delete("/{room_id}")
-async def remove_room(room_id: int, db: AsyncSession = Depends(get_db)):
+async def remove_room(room_id: int, db: AsyncSession = Depends(get_db), admin: User = Depends(get_current_admin)):
     return await delete_room(db, room_id)
 
 @router.patch( "/{room_id}", response_model=RoomResponse )
-async def patch_room( room_id: int, room_in: RoomUpdate, db: AsyncSession = Depends(get_db) ):
+async def patch_room( room_id: int, room_in: RoomUpdate, db: AsyncSession = Depends(get_db), admin: User = Depends(get_current_admin) ):
     return await update_room( db, room_id, room_in )
 
 
