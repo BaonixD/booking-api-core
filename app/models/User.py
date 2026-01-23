@@ -11,6 +11,7 @@ class User(Base):
 
     # mapped_column указывает настройки для базы данных
     id: Mapped[int] = mapped_column( primary_key=True, autoincrement=True )
+    is_admin: Mapped[bool] = mapped_column(default=False)
     email: Mapped[str] = mapped_column( unique=True, index=True, nullable=False)
     hashed_password: Mapped[str] = mapped_column( nullable=False)
 
