@@ -1,2 +1,1 @@
 # booking-api-core
-.
