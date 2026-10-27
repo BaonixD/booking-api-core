@@ -1,2 +1,2 @@
 # booking-api-core
-salam core
+core
